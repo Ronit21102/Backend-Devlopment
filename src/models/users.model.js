@@ -1,9 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt"
+
 
 const userSchema = new Schema(
   {
-    username: {
+    userName: {
       type: String,
       required: true,
       unique: true,
@@ -61,26 +63,29 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = async function () {
- return jwt.sign({
-    _id: this._id,
-    email: this.email,
-    username: this.username,
-    fullName: this.fullName,
-  },
-process_params.env.ACCESS_TOKEN_SECRET,
-  {
-    expiresIn: process_params.env.ACCESS_TOKEN_SECRET_EXPIRE,
-  });
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      userName: this.userName,
+      fullName: this.fullName,
+    },
+    process_params.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process_params.env.ACCESS_TOKEN_SECRET_EXPIRE,
+    }
+  );
 };
 userSchema.methods.generateRefreshToken = async function () {
- return jwt.sign({
-    _id: this._id,
-    
-  },
-process.env.Refresh_TOKEN_SECRET_EXPIRE,
-  {
-    expiresIn: process.env.Refresh_TOKEN_SECRET_EXPIRE,
-  });
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.Refresh_TOKEN_SECRET_EXPIRE,
+    {
+      expiresIn: process.env.Refresh_TOKEN_SECRET_EXPIRE,
+    }
+  );
 };
 
 export const User = mongoose.model("User", userSchema);
